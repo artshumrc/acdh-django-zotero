@@ -178,7 +178,7 @@ class ZotItem(models.Model):
         if self.zot_bibtex:
             return "{}".format(self.zot_bibtex)
         else:
-            return "{}: {}; {}".format(self.zot_creator, self.zot_title, self.zot_pub_title)
+            return "{}: {}; {}".format(self.author, self.zot_title, self.zot_date)
 
     def save(self, get_bibtex=False, *args, **kwargs):
         if get_bibtex:
