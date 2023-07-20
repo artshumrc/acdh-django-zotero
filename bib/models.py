@@ -52,7 +52,6 @@ class ZotItem(models.Model):
         blank=True, verbose_name="title",
         help_text="Stores all information from Zotero's 'title' field."
     )
-    # TODO was this removed in API v3?
     zot_pub_title = models.TextField(
         blank=True, verbose_name="publicationTitle",
         help_text="Stores all information from zoteros 'publicationTitle' field."
@@ -81,6 +80,10 @@ class ZotItem(models.Model):
         blank=True, null=True, verbose_name="number of volumes",
         help_text="Stores all information from Zotero's 'numberOfVolumes' field."
     )
+    issue = models.TextField(
+        blank=True, null=True, verbose_name="issue",
+        help_text="Stores all information from Zotero's 'issue' field."
+    )
     edition = models.TextField(
         blank=True, null=True, verbose_name="edition",
         help_text="Stores all information from Zotero's 'edition' field."
@@ -100,6 +103,14 @@ class ZotItem(models.Model):
     isbn = models.TextField(
         blank=True, null=True, verbose_name="isbn",
         help_text="Stores all information from Zotero's 'ISBN' field."
+    )
+    issn = models.TextField(
+        blank=True, null=True, verbose_name="issn",
+        help_text="Stores all information from Zotero's 'ISSN' field."
+    )
+    doi = models.TextField(
+        blank=True, null=True, verbose_name="doi",
+        help_text="Stores all information from Zotero's 'DOI' field."
     )
     url = models.TextField(
         blank=True, null=True, verbose_name="url",
@@ -178,7 +189,16 @@ class ZotItem(models.Model):
         if self.zot_bibtex:
             return "{}".format(self.zot_bibtex)
         else:
-            return "{}: {}; {}".format(self.author, self.zot_title, self.zot_date)
+            repr = ""
+            if self.author:
+                repr += "{}".format(self.author)
+            if self.zot_title:
+                repr += ": {}".format(self.zot_title)
+            if self.zot_pub_title:
+                repr += "; {}".format(self.zot_pub_title)
+            if self.zot_date:
+                repr += " ({})".format(self.zot_date)
+            return repr
 
     def save(self, get_bibtex=False, *args, **kwargs):
         if get_bibtex:

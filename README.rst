@@ -72,7 +72,9 @@ Features
 * The app also provides `management` commands to import items from a zotero library as well as to update existing items.
 
     `python manage.py bib_import --limit=15` # imports the top 15 items
+
     `python manage.py bib_import --since=100` # imports all items from library version 100
+    
     `python manage.py bib_import` # import everything
 
     `python manage.py bib_update` # imports all items with a higher version number then the highest version number of the items stored in your db.
