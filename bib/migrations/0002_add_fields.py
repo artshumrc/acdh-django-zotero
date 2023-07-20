@@ -37,8 +37,18 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='zotitem',
+            name='citation',
+            field=models.TextField(blank=True, help_text="Stores the item's citation representation. Pass ", verbose_name='citation'),
+        ),
+        migrations.AddField(
+            model_name='zotitem',
             name='collections',
             field=models.TextField(blank=True, help_text="Stores all information from Zotero's 'collections' field.", null=True, verbose_name='collection'),
+        ),
+        migrations.AddField(
+            model_name='zotitem',
+            name='conference_name',
+            field=models.TextField(blank=True, help_text="Stores all information from Zotero's 'conferenceName' field.", null=True, verbose_name='conference name'),
         ),
         migrations.AddField(
             model_name='zotitem',
@@ -77,6 +87,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='zotitem',
+            name='journal_abbreviation',
+            field=models.TextField(blank=True, help_text="Stores all information from Zotero's 'journalAbbreviation' field.", null=True, verbose_name='journal abbreviation'),
+        ),
+        migrations.AddField(
+            model_name='zotitem',
             name='language',
             field=models.TextField(blank=True, help_text="Stores all information from Zotero's 'language' field.", null=True, verbose_name='language'),
         ),
@@ -94,6 +109,11 @@ class Migration(migrations.Migration):
             model_name='zotitem',
             name='place',
             field=models.TextField(blank=True, help_text="Stores all information from Zotero's 'place' field.", null=True, verbose_name='place'),
+        ),
+        migrations.AddField(
+            model_name='zotitem',
+            name='proceedings_title',
+            field=models.TextField(blank=True, help_text="Stores all information from Zotero's 'proceedingsTitle' field.", null=True, verbose_name='proceedings title'),
         ),
         migrations.AddField(
             model_name='zotitem',
