@@ -59,7 +59,8 @@ setup(
     install_requires=[
         'pyzotero',
         'djangorestframework',
-        'django-autocomplete-light'
+        'django-autocomplete-light',
+        'requests'
     ],
     license="MIT",
     zip_safe=False,

@@ -4,7 +4,7 @@ from django.db import models
 from django.conf import settings
 
 from pyzotero import zotero
-
+from . zot_utils import citation_format_valid
 library_id = settings.Z_ID
 library_type = settings.Z_LIBRARY_TYPE
 api_key = settings.Z_API_KEY
@@ -14,13 +14,15 @@ try:
 except AttributeError:
     NN = 'N.N.'
 
-# TODO validate citation format
 try:
     citation_format = settings.Z_CITATION_FORMAT
 except AttributeError:
     citation_format = None
+if not citation_format_valid(citation_format):
+    citation_format = None
 
-
+# TODO maybe move fetch_ functions to zot_utils.py
+# would need to pass zot instance or keys as args
 def fetch_bibtex(zot_key):
     """ fetches the bibtex dict of the passed in key """
     result = {}
@@ -46,7 +48,12 @@ def fetch_citation(zot_key):
                 content="bib",
                 style=citation_format
             )
-            result['citation'] = citation
+            if len(citation) == 1:
+                result['citation'] = citation[0]
+            if len(citation) == 0:
+                raise Exception("No citation returned")
+            if len(citation) > 1:
+                raise Exception("More than one citation returned")
             result['error'] = None
         except Exception as e:
             result['citation'] = None

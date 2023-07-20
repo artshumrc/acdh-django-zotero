@@ -1,7 +1,16 @@
 from pyzotero import zotero
 from django.conf import settings
 from bib.models import ZotItem
+import requests
 
+def citation_format_valid(format):
+    """ validates the passed in citation format aginst Zotero's Style Repository using requests """
+    URL = "https://www.zotero.org/styles/{}".format(format)
+    r = requests.get(url=URL)
+    if r.status_code == 200:
+        return True
+    else:
+        return False
 
 def items_to_dict(library_id, library_type, api_key, limit=15, since_version=None, citation_format=None):
 
@@ -104,7 +113,12 @@ def items_to_dict(library_id, library_type, api_key, limit=15, since_version=Non
                         content="bib",
                         style=citation_format
                     )
-                    bib['citation'] = citation
+                    if len(citation) == 1:
+                        bib['citation'] = citation[0]
+                    if len(citation) == 0:
+                        raise Exception("No citation returned")
+                    if len(citation) > 1:
+                        raise Exception("More than one citation returned")
                 except Exception as e:
                     bib['citation'] = ""
             else:
