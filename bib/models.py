@@ -56,9 +56,21 @@ class ZotItem(models.Model):
         blank=True, verbose_name="publicationTitle",
         help_text="Stores all information from zoteros 'publicationTitle' field."
     )
+    journal_abbreviation = models.TextField(
+        blank=True, null=True, verbose_name="journal abbreviation",
+        help_text="Stores all information from Zotero's 'journalAbbreviation' field."
+    )
     short_title = models.TextField(
         blank=True, null=True, verbose_name="short title",
         help_text="Stores all information from Zotero's 'shortTitle' field."
+    )
+    proceedings_title = models.TextField(
+        blank=True, null=True, verbose_name="proceedings title",
+        help_text="Stores all information from Zotero's 'proceedingsTitle' field."
+    )
+    conference_name = models.TextField(
+        blank=True, null=True, verbose_name="conference name",
+        help_text="Stores all information from Zotero's 'conferenceName' field."
     )
     abstract_note = models.TextField(
         blank=True, null=True, verbose_name="abstract note",
