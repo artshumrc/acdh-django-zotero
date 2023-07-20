@@ -2,18 +2,26 @@
 import ast
 from django.db import models
 from django.conf import settings
-
+import requests
 from pyzotero import zotero
-from . zot_utils import citation_format_valid
+
+def citation_format_valid(format):
+    """ validates the passed in citation format aginst Zotero's Style Repository using requests """
+    URL = "https://www.zotero.org/styles/{}".format(format)
+    r = requests.get(url=URL)
+    if r.status_code == 200:
+        return True
+    else:
+        return False
+
+# Setup config variables
 library_id = settings.Z_ID
 library_type = settings.Z_LIBRARY_TYPE
 api_key = settings.Z_API_KEY
-
 try:
     NN = settings.Z_NN
 except AttributeError:
     NN = 'N.N.'
-
 try:
     citation_format = settings.Z_CITATION_FORMAT
 except AttributeError:
