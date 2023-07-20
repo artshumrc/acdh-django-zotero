@@ -38,6 +38,7 @@ Add following Zotero settings to you settings-file:
         Z_LIBRARY_TYPE = 'group' # or 'user'
         Z_API_KEY = "{a valid Zotero API user key}"
         Z_NN = {placeholder if no kind of creator is set, defaults to 'N.N.'}
+        Z_CITATION_FORMAT = {placeholder if no citation format is set; see https://www.zotero.org/styles. defaults to None}
 
 See [pyzotero](http://pyzotero.readthedocs.io/en/latest/) for more information
 

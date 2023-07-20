@@ -8,10 +8,17 @@ from pyzotero import zotero
 library_id = settings.Z_ID
 library_type = settings.Z_LIBRARY_TYPE
 api_key = settings.Z_API_KEY
+
 try:
     NN = settings.Z_NN
 except AttributeError:
     NN = 'N.N.'
+
+# TODO validate citation format
+try:
+    citation_format = settings.Z_CITATION_FORMAT
+except AttributeError:
+    citation_format = None
 
 
 def fetch_bibtex(zot_key):
@@ -25,6 +32,27 @@ def fetch_bibtex(zot_key):
         result['bibtex'] = None
         result['error'] = "{}".format(e)
 
+    return result
+
+def fetch_citation(zot_key):
+    """ fetches the citation dict of the passed in key """
+    result = {}
+    zot = zotero.Zotero(library_id, library_type, api_key)
+    if citation_format:
+        try:
+            citation = zot.top(
+                format="json",
+                itemKey=zot_key,
+                content="bib",
+                style=citation_format
+            )
+            result['citation'] = citation
+            result['error'] = None
+        except Exception as e:
+            result['citation'] = None
+            result['error'] = "{}".format(e)
+    else:
+        result['error'] = "Set Z_CITATION_FORMAT in settings.py"
     return result
 
 
@@ -193,6 +221,10 @@ class ZotItem(models.Model):
         blank=True, verbose_name="bibtex",
         help_text="Stores the item's bibtex representation."
     )
+    citation = models.TextField(
+        blank=True, verbose_name="citation",
+        help_text="Stores the item's citation representation. Pass "
+    )
 
     class Meta:
         ordering = ['-zot_version']
@@ -212,7 +244,7 @@ class ZotItem(models.Model):
                 repr += " ({})".format(self.zot_date)
             return repr
 
-    def save(self, get_bibtex=False, *args, **kwargs):
+    def save(self, get_bibtex=False, get_citation=False, *args, **kwargs):
         if get_bibtex:
             bibtex = fetch_bibtex(self.zot_key)
             if bibtex['bibtex']:
@@ -220,9 +252,14 @@ class ZotItem(models.Model):
                 self.save()
             else:
                 pass
-            super(ZotItem, self).save(*args, **kwargs)
-        else:
-            super(ZotItem, self).save(*args, **kwargs)
+        if get_citation:
+            citation = fetch_citation(self.zot_key)
+            if citation['citation']:
+                self.citation = "{}".format(citation['citation'])
+                self.save()
+            else:
+                pass
+        super(ZotItem, self).save(*args, **kwargs)
 
     @property
     def author(self):

@@ -16,6 +16,10 @@ from . zot_utils import items_to_dict, create_zotitem
 library_id = settings.Z_ID
 library_type = settings.Z_LIBRARY_TYPE
 api_key = settings.Z_API_KEY
+try:
+    citation_format = settings.Z_CITATION_FORMAT
+except AttributeError:
+    citation_format = None
 
 
 def sync_zotero(request):
@@ -34,7 +38,7 @@ def update_zotitems(request):
     context["books_before"] = ZotItem.objects.all().count()
     first_object = ZotItem.objects.all()[:1].get()
     since = first_object.zot_version
-    items = items_to_dict(library_id, library_type, api_key, limit=limit, since_version=since)
+    items = items_to_dict(library_id, library_type, api_key, limit=limit, since_version=since, citation_format=citation_format)
     for x in items['bibs']:
         temp_item = create_zotitem(x)
         context["saved"].append(temp_item)

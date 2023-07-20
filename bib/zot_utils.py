@@ -3,7 +3,7 @@ from django.conf import settings
 from bib.models import ZotItem
 
 
-def items_to_dict(library_id, library_type, api_key, limit=15, since_version=None):
+def items_to_dict(library_id, library_type, api_key, limit=15, since_version=None, citation_format=None):
 
     """
     returns a dict with keys 'error' containing possible error-msgs,
@@ -14,7 +14,7 @@ def items_to_dict(library_id, library_type, api_key, limit=15, since_version=Non
     zot = zotero.Zotero(library_id, library_type, api_key)
     result = {}
     error = None
-    itmes = None
+    items = None
     bibs = []
     if since_version:
         try:
@@ -96,6 +96,19 @@ def items_to_dict(library_id, library_type, api_key, limit=15, since_version=Non
                     bib['zot_bibtex'] = ""
             else:
                 bib['zot_bibtex'] = ""
+            if citation_format:
+                try:
+                    citation = zot.top(
+                        format="json",
+                        itemKey=x['data'].get('key'),
+                        content="bib",
+                        style=citation_format
+                    )
+                    bib['citation'] = citation
+                except Exception as e:
+                    bib['citation'] = ""
+            else:
+                bib['citation'] = ""
             bibs.append(bib)
             c += 1
 
@@ -103,7 +116,7 @@ def items_to_dict(library_id, library_type, api_key, limit=15, since_version=Non
     return result
 
 
-def create_zotitem(bib_item, get_bibtex=False):
+def create_zotitem(bib_item, get_bibtex=False, get_citation=False):
     """
     takes a dict with bib info created by 'items_to_dict'
     and creates/updates a ZotItem object
@@ -150,12 +163,13 @@ def create_zotitem(bib_item, get_bibtex=False):
     temp_item.zot_version = x['version']
     temp_item.zot_html_link = x['zot_html_link']
     temp_item.zot_api_link = x['zot_api_link']
+    temp_item.citation = x['citation']
+    # why is bibtex updated both here and in the model.save()?
+    # create_zotitem(get_bibtext=True) is never called in the management commands
+    # Following this pattern for citation for now.
     try:
         temp_item.zot_bibtex = x['zot_bibtex']
     except KeyError:
         pass
-    if get_bibtex:
-        temp_item.save(get_bibtex=True)
-    else:
-        temp_item.save()
+    temp_item.save(get_bibtex=get_bibtex, get_citation=get_citation)
     return temp_item
