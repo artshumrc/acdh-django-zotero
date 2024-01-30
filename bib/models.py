@@ -248,16 +248,16 @@ class ZotItem(models.Model):
         if self.zot_bibtex:
             return "{}".format(self.zot_bibtex)
         else:
-            repr = ""
+            parts = []
             if self.author:
-                repr += "{}".format(self.author)
+                parts.append("{}".format(self.author))
             if self.zot_title:
-                repr += ": {}".format(self.zot_title)
+                parts.append(": {}".format(self.zot_title))
             if self.zot_pub_title:
-                repr += "; {}".format(self.zot_pub_title)
+                parts.append("; {}".format(self.zot_pub_title))
             if self.zot_date:
-                repr += " ({})".format(self.zot_date)
-            return repr
+                parts.append(" ({})".format(self.zot_date))
+            return ' '.join(parts)
 
     def save(self, get_bibtex=False, get_citation=False, *args, **kwargs):
         if get_bibtex:
@@ -278,16 +278,16 @@ class ZotItem(models.Model):
 
     @property
     def author(self):
-        authors = []
-        author_list = ast.literal_eval(self.zot_creator)
-        for x in author_list:
-            try:
-                author = f"{x['firstName']} {x['lastName']}"
-            except KeyError:
-                author = f"{x.get('name', '')}"
-            authors.append(author.strip())
-        author_name = " / ".join(authors)
-        if author_name:
-            return author_name
-        else:
+        try:
+            author_list = ast.literal_eval(self.zot_creator)
+            authors = []
+            for x in author_list:
+                try:
+                    author = f"{x['firstName']} {x['lastName']}"
+                except KeyError:
+                    author = f"{x.get('name', '')}"
+                authors.append(author.strip())
+            return " / ".join(authors) if authors else NN
+        except (ValueError, SyntaxError):
+            # Handle empty or invalid zot_creator string
             return NN
