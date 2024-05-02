@@ -288,6 +288,6 @@ class ZotItem(models.Model):
                     author = f"{x.get('name', '')}"
                 authors.append(author.strip())
             return " / ".join(authors) if authors else NN
-        except (ValueError, SyntaxError):
+        except (ValueError, SyntaxError, TypeError):
             # Handle empty or invalid zot_creator string
             return NN
