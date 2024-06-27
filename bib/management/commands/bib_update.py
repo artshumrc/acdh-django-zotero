@@ -44,12 +44,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        limit = int(options['limit']) if options['limit'] else None
-        since = options['since'] if options['since'] else first_object.zot_version
         citation_format = options['citation_format'] if options['citation_format'] else getattr(settings, 'Z_CITATION_FORMAT', None)
         get_bibtext = options['get_bibtext'] if options['get_bibtext'] else False
         get_citation = options['get_citation'] if options['get_citation'] else False
         first_object = ZotItem.objects.all()[:1].get()
+        limit = int(options['limit']) if options['limit'] else None
+        since = options['since'] if options['since'] else first_object.zot_version
 
         self.stdout.write(
             self.style.SUCCESS("{}, {}".format(first_object, since))
