@@ -33,13 +33,13 @@ class Command(BaseCommand):
             help="The format in which the citation should be returned"
         )
         parser.add_argument(
-            '--get_bibtext',
-            dest='get_bibtext',
+            '--get_bibtex',
+            action='store_true',
             help="If the bibtex should be fetched"
-        ),
+        )
         parser.add_argument(
             '--get_citation',
-            dest='get_citation',
+            action='store_true',
             help="If the citation should be fetched"
         )
 
