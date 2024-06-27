@@ -9,7 +9,10 @@ from bib.models import ZotItem
 library_id = settings.Z_ID
 library_type = settings.Z_LIBRARY_TYPE
 api_key = settings.Z_API_KEY
-
+try:
+    citation_format = settings.Z_CITATION_FORMAT
+except AttributeError:
+    citation_format = None
 
 class Command(BaseCommand):
 
@@ -33,7 +36,7 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS("started: {}".format(datetime.datetime.now()))
         )
-        items = items_to_dict(library_id, library_type, api_key, limit=limit, since_version=since)
+        items = items_to_dict(library_id, library_type, api_key, limit=limit, since_version=since, citation_format=citation_format)
         self.stdout.write(
             self.style.SUCCESS("fetched {} items".format(len(items['items'])))
         )
