@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         citation_format = options['citation_format'] if options['citation_format'] else getattr(settings, 'Z_CITATION_FORMAT', None)
-        get_bibtext = options['get_bibtext'] if options['get_bibtext'] else False
+        get_bibtex = options['get_bibtex'] if options['get_bibtex'] else False
         get_citation = options['get_citation'] if options['get_citation'] else False
         first_object = ZotItem.objects.all()[:1].get()
         limit = int(options['limit']) if options['limit'] else None
@@ -72,7 +72,7 @@ class Command(BaseCommand):
             self.style.SUCCESS('starting creating/updating models now')
         )
         for x in items['bibs']:
-            temp_item = create_zotitem(x, get_bibtext=get_bibtext, get_citation=get_citation)
+            temp_item = create_zotitem(x, get_bibtex=get_bibtex, get_citation=get_citation)
             self.stdout.write(
                 self.style.SUCCESS('created: {}'.format(temp_item))
             )
